@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PolygonEditor.Structures
+{
+    public struct Edge
+    {
+        public Point start;
+        public Point end;
+    }
+}
