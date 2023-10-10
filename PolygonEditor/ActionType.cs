@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace PolygonEditor
 {
-    public enum Actions
+    public enum ActionType
     {
         Default,
-        Painting
+        AddNewShape,
+        Painting,
+        MovingVertex,
+        MovingEdge,
+        MovingShape
     }
 }

@@ -11,14 +11,14 @@ namespace PolygonEditor
 {
     public class Canvas
     {
-        //public bool IsPainting { get; set; } = false;
         public Bitmap picture;
         private List<Shape> shapes;
-        private Dictionary<ShapeTypes, Func<Color, Color, Color, Shape>> shapeCtors;
+        private Dictionary<ShapeType, Func<Color, Color, Color, Shape>> shapeCtors;
         private Color edgeColor = Color.DarkBlue;
         private Color vertexColor = Color.OrangeRed;
         private Color fillColor = Color.Aqua;
         private Color backGroundColor;
+        private (Shape, int) curMovedVertex = (null, -1);
 
         public Canvas(Bitmap bitmap, Color backGroundColor)
         {
@@ -28,16 +28,50 @@ namespace PolygonEditor
             InitializeDicts();
 
         }
+        public ActionType GetActionOnMove(Point p)
+        {
+            curMovedVertex = GetVertex(p);
+            if (curMovedVertex.Item2 >= 0)
+                return ActionType.MovingVertex;
+            return ActionType.Default;
+        }
+        private (Shape, int) GetVertex(Point p)
+        {
+            for (int i = shapes.Count - 1; i >= 0; i--)
+            {
+                Shape shape = shapes[i];
+                int idx = shape.IsOnVertex(p);
+                if (idx >= 0)
+                    return (shape, idx);
+            }
+            return (null, -1);
+        }
+        private (Shape, int) GetEdge(Point p)
+        {
+            for (int i = 0;  i < shapes.Count; i++)
+            {
+                Shape shape = shapes[i];
+                int idx = shape.IsOnEdge(p);
+                if(idx >= 0)
+                    return (shape, idx);
+            }
+            return (null, -1);
+        }
+        public void StartPainting(Point p, ShapeType shape)
+        {
+            shapes.Add(shapeCtors[shape](edgeColor, vertexColor, fillColor));
+            shapes.Last().AddPoint(p);
+            Draw();
+        }
         public bool AddPoint(Point p)
         {
             bool isFinished = shapes.Last().AddPoint(p);
             Draw();
             return isFinished;
         }
-        public void StartPainting(Point p, ShapeTypes shape)
+        public void MovePoint(Point p)
         {
-            shapes.Add(shapeCtors[shape](edgeColor, vertexColor, fillColor));
-            shapes.Last().AddPoint(p);
+            curMovedVertex.Item1.MovePoint(curMovedVertex.Item2 ,p);
             Draw();
         }
         public void Draw(Point? p = null)
@@ -57,9 +91,9 @@ namespace PolygonEditor
         }
         private void InitializeDicts()
         {
-            shapeCtors = new Dictionary<ShapeTypes, Func<Color, Color, Color, Shape>>();
+            shapeCtors = new Dictionary<ShapeType, Func<Color, Color, Color, Shape>>();
             var l = (Color c1, Color c2, Color c3) => new Polygon(c1, c2, c3);
-            shapeCtors.Add(ShapeTypes.Polygon, (Color c1, Color c2, Color c3) => new Polygon(c1, c2, c3));
+            shapeCtors.Add(ShapeType.Polygon, (Color c1, Color c2, Color c3) => new Polygon(c1, c2, c3));
         }
         public void TestDrawEllipse(int x, int y)
         {

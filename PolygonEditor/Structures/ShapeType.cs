@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PolygonEditor.Structures
 {
-    public enum ShapeTypes
+    public enum ShapeType
     {
         Polygon,
     }

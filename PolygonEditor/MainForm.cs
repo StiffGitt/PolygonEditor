@@ -4,7 +4,8 @@ namespace PolygonEditor
     public partial class MainForm : Form
     {
         private Canvas canvas;
-        private Actions curAction = Actions.Default;
+        private ActionType curAction = ActionType.AddNewShape;
+
         public MainForm()
         {
             InitializeComponent();
@@ -13,30 +14,63 @@ namespace PolygonEditor
             this.canvas = new Canvas(bitmap, pictureBox.BackColor);
         }
 
-        private void pictureBox_MouseClick(object sender, MouseEventArgs e)
+        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
             Point p = new Point(e.X, e.Y);
             switch (curAction)
             {
-                case Actions.Default:
-                    canvas.StartPainting(p, ShapeTypes.Polygon);
-                    curAction = Actions.Painting;
+                case ActionType.Painting:
+                    canvas.Draw(p);
                     break;
-                case Actions.Painting:
-                    curAction = canvas.AddPoint(p) ? Actions.Default : Actions.Painting;
+                case ActionType.MovingVertex:
+                    canvas.MovePoint(p);
+                    break;
+                default:
                     break;
             }
             pictureBox.Refresh();
         }
 
-        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
+        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            
-            if (curAction == Actions.Painting)
+            Point p = new Point(e.X, e.Y);
+            if (curAction == ActionType.Default)
             {
-                canvas.Draw(new Point(e.X, e.Y));
-                pictureBox.Refresh();
+                if (addButtom.Checked)
+                    curAction = ActionType.AddNewShape;
+                if (moveButton.Checked)
+                    curAction = canvas.GetActionOnMove(p);
+            }
+            
+            switch (curAction)
+            {
+                case ActionType.AddNewShape:
+                    canvas.StartPainting(p, ShapeType.Polygon);
+                    curAction = ActionType.Painting;
+                    break;
+                case ActionType.Painting:
+                    curAction = canvas.AddPoint(p) ? ActionType.Default : ActionType.Painting;
+                    break;
+                case ActionType.MovingVertex:
+                    canvas.MovePoint(p);
+                    break;
+                default:
+                    break;
+            }
+            pictureBox.Refresh();
+        }
+
+        private void pictureBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            switch (curAction)
+            {
+                case ActionType.MovingVertex:
+                    curAction = ActionType.Default;
+                    break;
+                default:
+                    break;
             }
         }
+
     }
 }

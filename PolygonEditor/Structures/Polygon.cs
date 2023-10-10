@@ -50,7 +50,7 @@ namespace PolygonEditor.Structures
         }
         public override bool AddPoint(Point p)
         {
-            if (points.Count > 0 && Utils.IsInCircle(p, points.First(), vertexRadius))
+            if (points.Count > 1 && Utils.IsInCircle(p, points.First(), vertexRadius))
             {
                 isFinished = true;
             }
@@ -59,6 +59,35 @@ namespace PolygonEditor.Structures
                 points.Add(p);
             }
             return isFinished;
+        }
+        public override void MovePoint(int idx, Point p)
+        {
+            points[idx] = p;
+
+        }
+        public override int IsOnVertex(Point p)
+        {
+            for(int i = 0; i < points.Count; i++)
+            {
+                if (Utils.IsInCircle(p, points[i], vertexRadius))
+                    return i;
+            }
+            return -1;
+        }
+
+        public override int IsOnEdge(Point p)
+        {
+            for (int i = 0, j = 1; i < points.Count; i++, j = (i + 1) % points.Count)
+            {
+                if (Utils.IsNearEdge(p, points[i], points[j]))
+                    return i;
+            }
+            return -1;
+        }
+
+        public override bool IsInside(Point p)
+        {
+            throw new NotImplementedException();
         }
     }
 }
