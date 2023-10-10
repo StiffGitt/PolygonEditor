@@ -30,33 +30,50 @@
         {
             tableLayoutPanel1 = new TableLayoutPanel();
             pictureBox = new PictureBox();
+            label1 = new Label();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
             SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
+            tableLayoutPanel1.BackColor = SystemColors.Control;
             tableLayoutPanel1.ColumnCount = 1;
-            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(pictureBox, 0, 1);
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(pictureBox, 0, 2);
+            tableLayoutPanel1.Controls.Add(label1, 0, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 2;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 363F));
+            tableLayoutPanel1.RowCount = 3;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 2F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.Size = new Size(782, 553);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // pictureBox
             // 
+            pictureBox.BackColor = SystemColors.Control;
             pictureBox.Dock = DockStyle.Fill;
-            pictureBox.Location = new Point(3, 193);
+            pictureBox.Location = new Point(3, 98);
             pictureBox.Name = "pictureBox";
-            pictureBox.Size = new Size(776, 357);
+            pictureBox.Size = new Size(776, 452);
             pictureBox.TabIndex = 0;
             pictureBox.TabStop = false;
             pictureBox.MouseClick += pictureBox_MouseClick;
+            pictureBox.MouseMove += pictureBox_MouseMove;
+            // 
+            // label1
+            // 
+            label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label1.AutoSize = true;
+            label1.BorderStyle = BorderStyle.Fixed3D;
+            label1.Location = new Point(3, 93);
+            label1.Name = "label1";
+            label1.Size = new Size(776, 2);
+            label1.TabIndex = 1;
+            label1.Text = "label1";
             // 
             // MainForm
             // 
@@ -68,6 +85,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Form1";
             tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             ResumeLayout(false);
         }
@@ -76,5 +94,6 @@
 
         private TableLayoutPanel tableLayoutPanel1;
         private PictureBox pictureBox;
+        private Label label1;
     }
 }
