@@ -28,5 +28,9 @@ namespace PolygonEditor.Structures
         {
             return (float)Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
         }
+        public static bool DoEdgesIntersect(Point a1, Point a2, Point b1, Point b2)
+        {
+
+        }
     }
 }

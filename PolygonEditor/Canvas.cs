@@ -19,6 +19,8 @@ namespace PolygonEditor
         private Color fillColor = Color.Aqua;
         private Color backGroundColor;
         private (Shape, int) curMovedVertex = (null, -1);
+        private (Shape, int, Point) curMovedEdge = (null, -1, new Point());
+        private (Shape, Point) curMovedShape = (null, new Point());
 
         public Canvas(Bitmap bitmap, Color backGroundColor)
         {
@@ -26,13 +28,19 @@ namespace PolygonEditor
             this.picture = bitmap;
             this.backGroundColor = backGroundColor;
             InitializeDicts();
-
         }
         public ActionType GetActionOnMove(Point p)
         {
             curMovedVertex = GetVertex(p);
             if (curMovedVertex.Item2 >= 0)
                 return ActionType.MovingVertex;
+            curMovedEdge = GetEdge(p);
+            if (curMovedEdge.Item2 >= 0)
+                return ActionType.MovingEdge;
+            curMovedShape = GetShape(p);
+            if (curMovedEdge.Item2 >= 0)
+                return ActionType.MovingShape;
+
             return ActionType.Default;
         }
         private (Shape, int) GetVertex(Point p)
@@ -46,16 +54,26 @@ namespace PolygonEditor
             }
             return (null, -1);
         }
-        private (Shape, int) GetEdge(Point p)
+        private (Shape, int, Point) GetEdge(Point p)
         {
-            for (int i = 0;  i < shapes.Count; i++)
+            for (int i = shapes.Count - 1; i >= 0; i--)
             {
                 Shape shape = shapes[i];
                 int idx = shape.IsOnEdge(p);
                 if(idx >= 0)
-                    return (shape, idx);
+                    return (shape, idx, p);
             }
-            return (null, -1);
+            return (null, -1, new Point());
+        }
+        private (Shape, Point) GetShape(Point p)
+        {
+            for (int i = shapes.Count - 1; i >= 0; i--)
+            {
+                Shape shape = shapes[i];
+                if (shape.IsInside(p))
+                    return (shape, p);
+            }
+            return (null, new Point());
         }
         public void StartPainting(Point p, ShapeType shape)
         {
@@ -72,6 +90,18 @@ namespace PolygonEditor
         public void MovePoint(Point p)
         {
             curMovedVertex.Item1.MovePoint(curMovedVertex.Item2 ,p);
+            Draw();
+        }
+        public void MoveEdge(Point p)
+        {
+            curMovedEdge.Item1.MoveEdge(curMovedEdge.Item2, p, curMovedEdge.Item3);
+            curMovedEdge.Item3 = p;
+            Draw();
+        }
+        public void MoveShape(Point p)
+        {
+            curMovedShape.Item1.MoveShape(p, curMovedShape.Item2);
+            curMovedShape.Item2 = p;
             Draw();
         }
         public void Draw(Point? p = null)

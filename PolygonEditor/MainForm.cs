@@ -13,24 +13,6 @@ namespace PolygonEditor
             pictureBox.Image = bitmap;
             this.canvas = new Canvas(bitmap, pictureBox.BackColor);
         }
-
-        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
-        {
-            Point p = new Point(e.X, e.Y);
-            switch (curAction)
-            {
-                case ActionType.Painting:
-                    canvas.Draw(p);
-                    break;
-                case ActionType.MovingVertex:
-                    canvas.MovePoint(p);
-                    break;
-                default:
-                    break;
-            }
-            pictureBox.Refresh();
-        }
-
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             Point p = new Point(e.X, e.Y);
@@ -54,6 +36,34 @@ namespace PolygonEditor
                 case ActionType.MovingVertex:
                     canvas.MovePoint(p);
                     break;
+                case ActionType.MovingEdge:
+                    canvas.MoveEdge(p);
+                    break;
+                case ActionType.MovingShape:
+                    canvas.MoveShape(p);
+                    break;
+                default:
+                    break;
+            }
+            pictureBox.Refresh();
+        }
+        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point p = new Point(e.X, e.Y);
+            switch (curAction)
+            {
+                case ActionType.Painting:
+                    canvas.Draw(p);
+                    break;
+                case ActionType.MovingVertex:
+                    canvas.MovePoint(p);
+                    break;
+                case ActionType.MovingEdge:
+                    canvas.MoveEdge(p);
+                    break;
+                case ActionType.MovingShape:
+                    canvas.MoveShape(p);
+                    break;
                 default:
                     break;
             }
@@ -65,6 +75,9 @@ namespace PolygonEditor
             switch (curAction)
             {
                 case ActionType.MovingVertex:
+                    curAction = ActionType.Default;
+                    break;
+                case ActionType.MovingEdge:
                     curAction = ActionType.Default;
                     break;
                 default:

@@ -63,7 +63,25 @@ namespace PolygonEditor.Structures
         public override void MovePoint(int idx, Point p)
         {
             points[idx] = p;
-
+        }
+        public override void MoveEdge(int idx, Point p, Point prevP)
+        {
+            int nextIdx = (idx + 1) % points.Count;
+            int distX = p.X - prevP.X;
+            int distY = p.Y - prevP.Y;
+            points[idx] = new Point(points[idx].X + distX, points[idx].Y + distY);
+            points[nextIdx] = new Point(points[nextIdx].X + distX, points[nextIdx].Y + distY);
+        }
+        public override void MoveShape(Point p, Point prevP)
+        {
+            int distX = p.X - prevP.X;
+            int distY = p.Y - prevP.Y;
+            List<Point> newPoints = new List<Point>();
+            foreach (Point point in points)
+            {
+                newPoints.Add(new Point(point.X + distX, point.Y + distY));
+            }
+            points = newPoints;
         }
         public override int IsOnVertex(Point p)
         {
