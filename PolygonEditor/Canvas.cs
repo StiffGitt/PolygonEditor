@@ -38,7 +38,7 @@ namespace PolygonEditor
             if (curMovedEdge.Item2 >= 0)
                 return ActionType.MovingEdge;
             curMovedShape = GetShape(p);
-            if (curMovedEdge.Item2 >= 0)
+            if (curMovedShape.Item1 != null)
                 return ActionType.MovingShape;
 
             return ActionType.Default;
@@ -103,6 +103,23 @@ namespace PolygonEditor
             curMovedShape.Item1.MoveShape(p, curMovedShape.Item2);
             curMovedShape.Item2 = p;
             Draw();
+        }
+        public void RemoveVertex(Point p)
+        {
+            var v = GetVertex(p);
+            if (v.Item2 >= 0)
+            {
+                bool isGone = v.Item1.RemoveVertex(v.Item2);
+                if (isGone)
+                    shapes.Remove(v.Item1);
+            }
+            Draw();
+        }
+        public void OffSetPolygon(Point p, int offset)
+        {
+            var s = GetShape(p);
+            if (s.Item1 != null)
+                ((Polygon)s.Item1).OffsetPolygon(offset);
         }
         public void Draw(Point? p = null)
         {

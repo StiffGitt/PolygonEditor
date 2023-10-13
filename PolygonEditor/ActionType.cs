@@ -13,6 +13,8 @@ namespace PolygonEditor
         Painting,
         MovingVertex,
         MovingEdge,
-        MovingShape
+        MovingShape,
+        RemovingVertex,
+        OffsettingPolygon
     }
 }

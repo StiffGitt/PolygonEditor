@@ -30,7 +30,7 @@ namespace PolygonEditor.Structures
             Pen edgePen = new Pen(edgeColor);
             SolidBrush vertexBrush = new SolidBrush(vertexColor);
             SolidBrush fillBrush = new SolidBrush(brushColor);
-            if (isFinished)
+            if (isFinished && points.Count > 1)
             {
                 g.FillPolygon(fillBrush, points.ToArray());
                 g.DrawPolygon(edgePen, points.ToArray());
@@ -83,6 +83,15 @@ namespace PolygonEditor.Structures
             }
             points = newPoints;
         }
+        public override bool RemoveVertex(int idx)
+        {
+            points.RemoveAt(idx);
+            return points.Count == 0;
+        }
+        public void OffsetPolygon(int offset)
+        {
+
+        }
         public override int IsOnVertex(Point p)
         {
             for(int i = 0; i < points.Count; i++)
@@ -105,7 +114,18 @@ namespace PolygonEditor.Structures
 
         public override bool IsInside(Point p)
         {
-            throw new NotImplementedException();
+            int minY = points.First().Y;
+            foreach (Point point in points)
+                if (point.Y < minY)
+                    minY = point.Y;
+            Point lineEnd = new Point(p.X, minY);
+            int intersects = 0;
+            for (int i = 0; i < points.Count; i++)
+            {
+                if(Utils.DoEdgesIntersect(p, lineEnd, points[i], points[(i + 1) % points.Count]))
+                    intersects++;
+            }
+            return intersects % 2 == 1;
         }
     }
 }

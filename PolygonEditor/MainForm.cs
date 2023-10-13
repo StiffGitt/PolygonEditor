@@ -22,8 +22,10 @@ namespace PolygonEditor
                     curAction = ActionType.AddNewShape;
                 if (moveButton.Checked)
                     curAction = canvas.GetActionOnMove(p);
+                if (deleteButton.Checked)
+                    curAction = ActionType.RemovingVertex;
             }
-            
+
             switch (curAction)
             {
                 case ActionType.AddNewShape:
@@ -41,6 +43,15 @@ namespace PolygonEditor
                     break;
                 case ActionType.MovingShape:
                     canvas.MoveShape(p);
+                    break;
+                case ActionType.RemovingVertex:
+                    canvas.RemoveVertex(p);
+                    curAction = ActionType.Default;
+                    break;
+                case ActionType.OffsettingPolygon:
+                    canvas.OffSetPolygon(p, (int)numericUpDown.Value);
+                    curAction = ActionType.Default;
+                    Cursor = System.Windows.Forms.Cursors.Default;
                     break;
                 default:
                     break;
@@ -80,10 +91,21 @@ namespace PolygonEditor
                 case ActionType.MovingEdge:
                     curAction = ActionType.Default;
                     break;
+                case ActionType.MovingShape:
+                    curAction = ActionType.Default;
+                    break;
                 default:
                     break;
             }
         }
 
+        private void offsetPolygonButton_Click(object sender, EventArgs e)
+        {
+            if (curAction == ActionType.Default)
+            {
+                curAction = ActionType.OffsettingPolygon;
+                Cursor = System.Windows.Forms.Cursors.Cross;
+            }
+        }
     }
 }
