@@ -12,21 +12,24 @@ namespace PolygonEditor
     public class Canvas
     {
         public Bitmap picture;
+        private PictureBox pictureBox;
         private List<Shape> shapes;
-        private Dictionary<ShapeType, Func<Color, Color, Color, Shape>> shapeCtors;
+        private Dictionary<ShapeType, Func<Color, Color, Color, Color, Shape>> shapeCtors;
         private Color edgeColor = Color.DarkBlue;
         private Color vertexColor = Color.OrangeRed;
         private Color fillColor = Color.Aqua;
+        private Color hullColor = Color.Green;
         private Color backGroundColor;
         private (Shape, int) curMovedVertex = (null, -1);
         private (Shape, int, Point) curMovedEdge = (null, -1, new Point());
         private (Shape, Point) curMovedShape = (null, new Point());
 
-        public Canvas(Bitmap bitmap, Color backGroundColor)
+        public Canvas(Bitmap bitmap, PictureBox pictureBox)
         {
             shapes = new List<Shape>();
             this.picture = bitmap;
-            this.backGroundColor = backGroundColor;
+            this.backGroundColor = pictureBox.BackColor;
+            this.pictureBox = pictureBox;
             InitializeDicts();
         }
         public ActionType GetActionOnMove(Point p)
@@ -77,7 +80,7 @@ namespace PolygonEditor
         }
         public void StartPainting(Point p, ShapeType shape)
         {
-            shapes.Add(shapeCtors[shape](edgeColor, vertexColor, fillColor));
+            shapes.Add(shapeCtors[shape](edgeColor, vertexColor, fillColor, hullColor));
             shapes.Last().AddPoint(p);
             Draw();
         }
@@ -125,6 +128,8 @@ namespace PolygonEditor
         public void Draw(Point? p = null)
         {
             Clear();
+            picture = new Bitmap(pictureBox.Width, pictureBox.Height);
+            pictureBox.Image = picture;
             foreach (Shape shape in shapes)
             {
                 shape.Draw(picture, p);
@@ -139,9 +144,9 @@ namespace PolygonEditor
         }
         private void InitializeDicts()
         {
-            shapeCtors = new Dictionary<ShapeType, Func<Color, Color, Color, Shape>>();
-            var l = (Color c1, Color c2, Color c3) => new Polygon(c1, c2, c3);
-            shapeCtors.Add(ShapeType.Polygon, (Color c1, Color c2, Color c3) => new Polygon(c1, c2, c3));
+            shapeCtors = new Dictionary<ShapeType, Func<Color, Color, Color, Color, Shape>>();
+            var l = (Color c1, Color c2, Color c3, Color c4) => new Polygon(c1, c2, c3, c4);
+            shapeCtors.Add(ShapeType.Polygon, (Color c1, Color c2, Color c3, Color c4) => new Polygon(c1, c2, c3, c4));
         }
         public void TestDrawEllipse(int x, int y)
         {

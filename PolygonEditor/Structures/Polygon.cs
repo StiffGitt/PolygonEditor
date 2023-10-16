@@ -14,18 +14,19 @@ namespace PolygonEditor.Structures
         private Color edgeColor;
         private Color vertexColor;
         private Color brushColor;
+        private Color hullColor;
         private bool isFinished = false;
 
-        public Polygon(Color edgeColor, Color vertexColor, Color brushColor) 
+        public Polygon(Color edgeColor, Color vertexColor, Color brushColor, Color hullColor) 
         {
             this.edgeColor = edgeColor;
             this.vertexColor = vertexColor;
             this.brushColor = brushColor;
+            this.hullColor = hullColor;
             this.points = new List<Point>();
         }
         public override void Draw(Bitmap picture, Point? p = null)
         {
-
             Graphics g = Graphics.FromImage(picture);
             Pen edgePen = new Pen(edgeColor);
             SolidBrush vertexBrush = new SolidBrush(vertexColor);
@@ -127,12 +128,38 @@ namespace PolygonEditor.Structures
         }
         private void DrawInflated(Graphics g)
         {
+            var hullPen = new Pen(hullColor);
             var segments = Utils.GetSegmentsFromPoints(points);
-            foreach (var s in segments)
+            int j;
+            Point? prevP = null;
+            for(int i = 0; i <  segments.Count; i++)
             {
-                var sp = s.GetParallelsBy(inflationOffset);
-                g.DrawLine(Pens.DeepPink, sp.Item1.a, sp.Item1.b);
-                g.DrawLine(Pens.Red, sp.Item2.a, sp.Item2.b);
+                j = (i + 1) % segments.Count;
+                var prevS = segments[i];
+                var s = segments[j];
+                var parS = s.GetParallelsBy(inflationOffset);
+                var p = Utils.LinesIntersectionPoint(Utils.ExtendSegmentToLine(prevS), Utils.ExtendSegmentToLine(parS.Item1));
+                //SolidBrush vertexBrush = new SolidBrush(vertexColor);
+                //g.FillEllipse(vertexBrush, (p.X - vertexRadius / 2), (p.Y - vertexRadius / 2), vertexRadius, vertexRadius);
+                if (!Utils.IsPointOnRay(prevS.b, prevS.a, p))
+                {
+                    g.DrawLine(hullPen, parS.Item1.a, parS.Item1.b);
+                    if (prevP != null)
+                    {
+                        Utils.DrawArcByPoints(g, hullPen, s.a, parS.Item1.a, (Point)prevP);
+                    }
+                    prevP = parS.Item1.b;
+                }
+                else
+                {
+                    g.DrawLine(hullPen, parS.Item2.a, parS.Item2.b);
+                    if (prevP != null)
+                    {
+                        Utils.DrawArcByPoints(g, hullPen, s.a, parS.Item2.a, (Point)prevP);
+                    }
+                    prevP = parS.Item2.b;
+                }
+                
             }
         }
         

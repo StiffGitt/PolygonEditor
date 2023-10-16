@@ -11,7 +11,7 @@ namespace PolygonEditor
             InitializeComponent();
             Bitmap bitmap = new Bitmap(pictureBox.Size.Width, pictureBox.Size.Height);
             pictureBox.Image = bitmap;
-            this.canvas = new Canvas(bitmap, pictureBox.BackColor);
+            this.canvas = new Canvas(bitmap, pictureBox);
         }
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
@@ -98,7 +98,6 @@ namespace PolygonEditor
                     break;
             }
         }
-
         private void offsetPolygonButton_Click(object sender, EventArgs e)
         {
             if (curAction == ActionType.Default)

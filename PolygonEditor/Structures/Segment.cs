@@ -24,17 +24,19 @@ namespace PolygonEditor.Structures
             double dbx = (double) b.X;
             double dby = (double) b.Y;
             double m = (dby - day) / (dbx - dax);
-            //double ax1 = (dax*(1 + m) + Math.Sqrt(dax*dax*(1+m)*(1+m) - (1+m)*(dax*dax*(1+m) - offset*offset*m*m))) / (m + 1);
-            //double ax2 = (dax*(1 + m) - Math.Sqrt(dax*dax*(1+m)*(1+m) - (1+m)*(dax*dax*(1+m) - offset*offset*m*m))) / (m + 1);
-            double ax1 = dax - (offset*m) / (Math.Sqrt(m*m + 1));
-            double ax2 = dax + (offset*m) / (Math.Sqrt(m*m + 1));
+            //double ax1 = (dax * (1 + m) + Math.Sqrt(dax * dax * (1 + m) * (1 + m) - (1 + m) * (dax * dax * (1 + m) - offset * offset * m * m))) / (m + 1);
+            //double ax2 = (dax * (1 + m) - Math.Sqrt(dax * dax * (1 + m) * (1 + m) - (1 + m) * (dax * dax * (1 + m) - offset * offset * m * m))) / (m + 1);
+            double ax1 = dax - (offset * m) / (Math.Sqrt(m * m + 1));
+            double ax2 = dax + (offset * m) / (Math.Sqrt(m * m + 1));
+            //double ax1 = (dax / (m * m) + dax - Math.Sqrt(offset * offset * m * m + offset * offset)) / (1 / (m * m) + 1);
+            //double ax2 = (dax / (m * m) + dax + Math.Sqrt(offset * offset * m * m + offset * offset)) / (1 / (m * m) + 1);
             double ay1 = day + (dax - ax1) / m;
             double ay2 = day + (dax - ax2) / m;
 
             double bx1 = dbx - (offset * m) / (Math.Sqrt(m * m + 1));
             double bx2 = dbx + (offset * m) / (Math.Sqrt(m * m + 1));
-            double by1 = dby + (dbx - ax1) / m;
-            double by2 = dby + (dbx - ax2) / m;
+            double by1 = dby + (dbx - bx1) / m;
+            double by2 = dby + (dbx - bx2) / m;
 
             var a1 = new Point((int)ax1, (int)ay1);
             var b1 = new Point((int)bx1, (int)by1);
