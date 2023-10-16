@@ -46,6 +46,8 @@ namespace PolygonEditor.Structures
             {
                 g.FillEllipse(vertexBrush, (v.X - vertexRadius / 2), (v.Y - vertexRadius / 2), vertexRadius, vertexRadius);
             }
+            if (isInflated && points.Count >= 3)
+                DrawInflated(g);
             g.Dispose();
         }
         public override bool AddPoint(Point p)
@@ -88,10 +90,6 @@ namespace PolygonEditor.Structures
             points.RemoveAt(idx);
             return points.Count == 0;
         }
-        public void OffsetPolygon(int offset)
-        {
-
-        }
         public override int IsOnVertex(Point p)
         {
             for(int i = 0; i < points.Count; i++)
@@ -127,5 +125,17 @@ namespace PolygonEditor.Structures
             }
             return intersects % 2 == 1;
         }
+        private void DrawInflated(Graphics g)
+        {
+            var segments = Utils.GetSegmentsFromPoints(points);
+            foreach (var s in segments)
+            {
+                var sp = s.GetParallelsBy(inflationOffset);
+                g.DrawLine(Pens.DeepPink, sp.Item1.a, sp.Item1.b);
+                g.DrawLine(Pens.Red, sp.Item2.a, sp.Item2.b);
+            }
+        }
+        
+
     }
 }

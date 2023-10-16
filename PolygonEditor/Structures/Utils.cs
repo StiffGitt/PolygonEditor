@@ -55,10 +55,17 @@ namespace PolygonEditor.Structures
                 return false;
             return true;
         }
-        public static Point FindCentroidOfPolygon(Polygon polygon)
+        public static List<Segment> GetSegmentsFromPoints(List<Point> points)
         {
-            throw new NotImplementedException();
+            List<Segment> segments = new List<Segment>();
+            for (int i = 0, j; i < points.Count; i++)
+            {
+                j = (i + 1) % points.Count;
+                var a = new Point(points[i].X, points[i].Y);
+                var b = new Point(points[j].X, points[j].Y);
+                segments.Add(new Segment(a, b));
+            }
+            return segments;
         }
-
     }
 }

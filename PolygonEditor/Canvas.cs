@@ -119,7 +119,8 @@ namespace PolygonEditor
         {
             var s = GetShape(p);
             if (s.Item1 != null)
-                ((Polygon)s.Item1).OffsetPolygon(offset);
+                s.Item1.Inflate(offset);
+            Draw();
         }
         public void Draw(Point? p = null)
         {
