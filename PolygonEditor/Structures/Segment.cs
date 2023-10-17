@@ -24,7 +24,7 @@ namespace PolygonEditor.Structures
             double dbx = (double) b.X;
             double dby = (double) b.Y;
             double m = (dby - day) / (dbx - dax);
-            //double ax1 = (dax * (1 + m) + Math.Sqrt(dax * dax * (1 + m) * (1 + m) - (1 + m) * (dax * dax * (1 + m) - offset * offset * m * m))) / (m + 1);
+            //double ax1 = (dax * (1 + m) + Math.Sqrt(dax * dax * (1 + m) * (-1 + m) - (1 + m) * (dax * dax * (1 + m) - offset * offset * m * m))) / (m + 1);
             //double ax2 = (dax * (1 + m) - Math.Sqrt(dax * dax * (1 + m) * (1 + m) - (1 + m) * (dax * dax * (1 + m) - offset * offset * m * m))) / (m + 1);
             double ax1 = dax - (offset * m) / (Math.Sqrt(m * m + 1));
             double ax2 = dax + (offset * m) / (Math.Sqrt(m * m + 1));

@@ -132,34 +132,33 @@ namespace PolygonEditor.Structures
             var segments = Utils.GetSegmentsFromPoints(points);
             int j;
             Point? prevP = null;
-            for(int i = 0; i <  segments.Count; i++)
+            List<Segment> hullSegments = new List<Segment>();
+            for (int i = 0; i < segments.Count; i++)
             {
-                j = (i + 1) % segments.Count;
-                var prevS = segments[i];
-                var s = segments[j];
+                j = (i == 0) ? segments.Count - 1 : i - 1;
+                var prevS = segments[j];
+                var s = segments[i];
                 var parS = s.GetParallelsBy(inflationOffset);
                 var p = Utils.LinesIntersectionPoint(Utils.ExtendSegmentToLine(prevS), Utils.ExtendSegmentToLine(parS.Item1));
                 //SolidBrush vertexBrush = new SolidBrush(vertexColor);
                 //g.FillEllipse(vertexBrush, (p.X - vertexRadius / 2), (p.Y - vertexRadius / 2), vertexRadius, vertexRadius);
-                if (!Utils.IsPointOnRay(prevS.b, prevS.a, p))
+                int crossProduct = Utils.Product(prevS.a.Substract(s.a), s.b.Substract(s.a));
+                if (!Utils.IsPointOnRay(prevS.b, prevS.a, p) && crossProduct >= 0 || Utils.IsPointOnRay(prevS.b, prevS.a, p) && crossProduct < 0)
                 {
-                    g.DrawLine(hullPen, parS.Item1.a, parS.Item1.b);
-                    if (prevP != null)
-                    {
-                        Utils.DrawArcByPoints(g, hullPen, s.a, parS.Item1.a, (Point)prevP);
-                    }
-                    prevP = parS.Item1.b;
+                    hullSegments.Add(parS.Item1);
                 }
                 else
                 {
-                    g.DrawLine(hullPen, parS.Item2.a, parS.Item2.b);
-                    if (prevP != null)
-                    {
-                        Utils.DrawArcByPoints(g, hullPen, s.a, parS.Item2.a, (Point)prevP);
-                    }
-                    prevP = parS.Item2.b;
+                    hullSegments.Add(parS.Item2);
                 }
-                
+            }
+            for (int i = 0; i < hullSegments.Count; i++)
+            {
+                j = (i == 0) ? hullSegments.Count - 1 : i - 1;
+                var prevS = hullSegments[j];
+                var s = hullSegments[i];
+                g.DrawLine(hullPen, s.a, s.b);
+                Utils.DrawArcByPoints(g, hullPen, segments[j].b, s.a, prevS.b);
             }
         }
         
