@@ -113,11 +113,11 @@ namespace PolygonEditor.Structures
 
         public override bool IsInside(Point p)
         {
-            int minY = points.First().Y;
-            foreach (Point point in points)
-                if (point.Y < minY)
-                    minY = point.Y;
-            Point lineEnd = new Point(p.X, minY);
+            //int minY = points.First().Y;
+            //foreach (Point point in points)
+            //    if (point.Y < minY)
+            //        minY = point.Y;
+            Point lineEnd = new Point(0, p.Y);
             int intersects = 0;
             for (int i = 0; i < points.Count; i++)
             {
@@ -129,8 +129,8 @@ namespace PolygonEditor.Structures
         private void DrawInflated(Graphics g)
         {
             var hullPen = new Pen(hullColor);
-            SortCounterClockwise();
-            var segments = Utils.GetSegmentsFromPoints(points);
+            
+            var segments = Utils.GetSegmentsFromPoints(Utils.SortCounterClockwise(points));
             int j;
             List<(Segment, bool)> hullSegments = new List<(Segment, bool)>();
             for (int i = 0; i < segments.Count; i++)
@@ -179,7 +179,6 @@ namespace PolygonEditor.Structures
                         var pprev = Utils.LinesIntersectionPoint(Utils.ExtendSegmentToLine(prevPrevS), Utils.ExtendSegmentToLine(prevS));
                         g.DrawLine(hullPen, pprev, p);
                     }
-
                 }
                 else
                 {
@@ -189,30 +188,5 @@ namespace PolygonEditor.Structures
 
             }
         }
-        
-        private void SortCounterClockwise()
-        {
-            int idx = 0;
-            for (int i = 1; i < points.Count; i++)
-            {
-                if (points[idx].Y < points[i].Y || (points[idx].Y == points[i].Y && points[idx].X < points[i].X))
-                    idx = i;
-            }
-            int prev = (idx == 0) ? points.Count - 1 : idx - 1;
-            int next = (idx + 1) % points.Count;
-            if (Utils.Product(points[prev].Substract(points[idx]), points[next].Substract(points[idx])) >= 0)
-                return;
-            Point temp;
-            for (int i = 0; i < (points.Count - 1) / 2; i++) 
-            {
-                temp = points[next];
-                points[next] = points[prev];
-                points[prev] = temp;
-
-                prev = (prev == 0) ? points.Count - 1 : prev - 1;
-                next = (next + 1) % points.Count;
-            }
-        }
-
     }
 }

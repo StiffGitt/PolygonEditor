@@ -23,6 +23,7 @@ namespace PolygonEditor
         private (Shape, int) curMovedVertex = (null, -1);
         private (Shape, int, Point) curMovedEdge = (null, -1, new Point());
         private (Shape, Point) curMovedShape = (null, new Point());
+        private Shape lastOffsettedShape = null;
 
         public Canvas(Bitmap bitmap, PictureBox pictureBox)
         {
@@ -120,9 +121,18 @@ namespace PolygonEditor
         }
         public void OffSetPolygon(Point p, int offset)
         {
-            var s = GetShape(p);
-            if (s.Item1 != null)
-                s.Item1.Inflate(offset);
+            Shape s;
+            s = GetShape((Point)p).Item1;
+            if (s != null)
+                s.Inflate(offset);
+            Draw();
+            lastOffsettedShape = s;
+        }
+        public void OffSetLastPolygon(int offset)
+        {
+            var s = lastOffsettedShape;
+            if (s != null)
+                s.Inflate(offset);
             Draw();
         }
         public void Draw(Point? p = null)

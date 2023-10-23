@@ -106,5 +106,22 @@ namespace PolygonEditor
                 Cursor = System.Windows.Forms.Cursors.Cross;
             }
         }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            canvas.Draw();
+            pictureBox.Refresh();
+        }
+
+        private void numericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            canvas.OffSetLastPolygon((int)numericUpDown.Value);
+            pictureBox.Refresh();
+        }
+
+        private void resetActionButton_Click(object sender, EventArgs e)
+        {
+            curAction = ActionType.Default;
+        }
     }
 }
