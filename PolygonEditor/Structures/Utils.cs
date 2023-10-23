@@ -92,10 +92,20 @@ namespace PolygonEditor.Structures
         // dla współliniowych punktów
         public static bool IsPointOnRay(Point start, Point dir, Point p)
         {
-            if (start.X < dir.X)
-                return p.X >= start.X;
+            if (start.X != p.X)
+            {
+                if (start.X < dir.X)
+                    return p.X > start.X;
+                else
+                    return p.X < start.X;
+            }
             else
-                return p.X <= start.X;
+            {
+                if (start.Y < dir.Y)
+                    return p.Y > start.Y;
+                else
+                    return p.Y < start.Y;
+            }
         }
         public static void DrawArcByPoints(Graphics g, Pen pen, Point s, Point ai, Point bi)
         {

@@ -129,10 +129,10 @@ namespace PolygonEditor.Structures
         private void DrawInflated(Graphics g)
         {
             var hullPen = new Pen(hullColor);
+            SortCounterClockwise();
             var segments = Utils.GetSegmentsFromPoints(points);
             int j;
-            Point? prevP = null;
-            List<Segment> hullSegments = new List<Segment>();
+            List<(Segment, bool)> hullSegments = new List<(Segment, bool)>();
             for (int i = 0; i < segments.Count; i++)
             {
                 j = (i == 0) ? segments.Count - 1 : i - 1;
@@ -143,25 +143,76 @@ namespace PolygonEditor.Structures
                 //SolidBrush vertexBrush = new SolidBrush(vertexColor);
                 //g.FillEllipse(vertexBrush, (p.X - vertexRadius / 2), (p.Y - vertexRadius / 2), vertexRadius, vertexRadius);
                 int crossProduct = Utils.Product(prevS.a.Substract(s.a), s.b.Substract(s.a));
+                bool isConvex = crossProduct >= 0;
                 if (!Utils.IsPointOnRay(prevS.b, prevS.a, p) && crossProduct >= 0 || Utils.IsPointOnRay(prevS.b, prevS.a, p) && crossProduct < 0)
                 {
-                    hullSegments.Add(parS.Item1);
+                    hullSegments.Add((parS.Item1, isConvex));
                 }
                 else
                 {
-                    hullSegments.Add(parS.Item2);
+                    hullSegments.Add((parS.Item2, isConvex));
                 }
             }
-            for (int i = 0; i < hullSegments.Count; i++)
+            for (int i = 0, k; i < hullSegments.Count; i++)
             {
                 j = (i == 0) ? hullSegments.Count - 1 : i - 1;
-                var prevS = hullSegments[j];
-                var s = hullSegments[i];
-                g.DrawLine(hullPen, s.a, s.b);
-                Utils.DrawArcByPoints(g, hullPen, segments[j].b, s.a, prevS.b);
+                k = (i + 1) % hullSegments.Count;
+                var prevS = hullSegments[j].Item1;
+                var s = hullSegments[i].Item1;
+                if (hullSegments[i].Item2)
+                {
+                    if (hullSegments[k].Item2)
+                        g.DrawLine(hullPen, s.a, s.b);
+                    Utils.DrawArcByPoints(g, hullPen, segments[j].b, s.a, prevS.b);
+                }
+                else if (hullSegments[k].Item2)
+                {
+                    var p = Utils.LinesIntersectionPoint(Utils.ExtendSegmentToLine(prevS), Utils.ExtendSegmentToLine(s));
+                    g.DrawLine(hullPen, hullSegments[i].Item1.b, p);
+                    if (hullSegments[j].Item2)
+                    {
+                        g.DrawLine(hullPen, hullSegments[j].Item1.a, p);
+                    }
+                    else
+                    {
+                        var prevPrevS = hullSegments[(j == 0) ? hullSegments.Count - 1 : j - 1].Item1;
+                        var pprev = Utils.LinesIntersectionPoint(Utils.ExtendSegmentToLine(prevPrevS), Utils.ExtendSegmentToLine(prevS));
+                        g.DrawLine(hullPen, pprev, p);
+                    }
+
+                }
+                else
+                {
+                    var p = Utils.LinesIntersectionPoint(Utils.ExtendSegmentToLine(prevS), Utils.ExtendSegmentToLine(s));
+                    g.DrawLine(hullPen, hullSegments[j].Item1.a, p);
+                }
+
             }
         }
         
+        private void SortCounterClockwise()
+        {
+            int idx = 0;
+            for (int i = 1; i < points.Count; i++)
+            {
+                if (points[idx].Y < points[i].Y || (points[idx].Y == points[i].Y && points[idx].X < points[i].X))
+                    idx = i;
+            }
+            int prev = (idx == 0) ? points.Count - 1 : idx - 1;
+            int next = (idx + 1) % points.Count;
+            if (Utils.Product(points[prev].Substract(points[idx]), points[next].Substract(points[idx])) >= 0)
+                return;
+            Point temp;
+            for (int i = 0; i < (points.Count - 1) / 2; i++) 
+            {
+                temp = points[next];
+                points[next] = points[prev];
+                points[prev] = temp;
+
+                prev = (prev == 0) ? points.Count - 1 : prev - 1;
+                next = (next + 1) % points.Count;
+            }
+        }
 
     }
 }
