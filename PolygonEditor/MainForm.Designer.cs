@@ -32,6 +32,9 @@
             pictureBox = new PictureBox();
             label1 = new Label();
             groupBox1 = new GroupBox();
+            groupBox2 = new GroupBox();
+            verticalButton = new Button();
+            horizontalButton = new Button();
             resetActionButton = new Button();
             numericUpDown = new NumericUpDown();
             offsetPolygonButton = new Button();
@@ -41,6 +44,7 @@
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
             groupBox1.SuspendLayout();
+            groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown).BeginInit();
             SuspendLayout();
             // 
@@ -88,6 +92,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(groupBox2);
             groupBox1.Controls.Add(resetActionButton);
             groupBox1.Controls.Add(numericUpDown);
             groupBox1.Controls.Add(offsetPolygonButton);
@@ -101,6 +106,37 @@
             groupBox1.TabIndex = 2;
             groupBox1.TabStop = false;
             // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(verticalButton);
+            groupBox2.Controls.Add(horizontalButton);
+            groupBox2.Location = new Point(312, 0);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(127, 94);
+            groupBox2.TabIndex = 7;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Relations";
+            // 
+            // verticalButton
+            // 
+            verticalButton.Location = new Point(6, 59);
+            verticalButton.Name = "verticalButton";
+            verticalButton.Size = new Size(112, 29);
+            verticalButton.TabIndex = 1;
+            verticalButton.Text = "Vertical";
+            verticalButton.UseVisualStyleBackColor = true;
+            verticalButton.Click += verticalButton_Click;
+            // 
+            // horizontalButton
+            // 
+            horizontalButton.Location = new Point(6, 26);
+            horizontalButton.Name = "horizontalButton";
+            horizontalButton.Size = new Size(112, 29);
+            horizontalButton.TabIndex = 0;
+            horizontalButton.Text = "Horizontal";
+            horizontalButton.UseVisualStyleBackColor = true;
+            horizontalButton.Click += horizontalButton_Click;
+            // 
             // resetActionButton
             // 
             resetActionButton.Location = new Point(652, 44);
@@ -113,7 +149,7 @@
             // 
             // numericUpDown
             // 
-            numericUpDown.Location = new Point(195, 50);
+            numericUpDown.Location = new Point(137, 54);
             numericUpDown.Margin = new Padding(3, 4, 3, 4);
             numericUpDown.Maximum = new decimal(new int[] { 500, 0, 0, 0 });
             numericUpDown.Name = "numericUpDown";
@@ -125,7 +161,7 @@
             // 
             // offsetPolygonButton
             // 
-            offsetPolygonButton.Location = new Point(123, 44);
+            offsetPolygonButton.Location = new Point(209, 48);
             offsetPolygonButton.Margin = new Padding(3, 4, 3, 4);
             offsetPolygonButton.Name = "offsetPolygonButton";
             offsetPolygonButton.Size = new Size(66, 37);
@@ -182,6 +218,7 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)numericUpDown).EndInit();
             ResumeLayout(false);
         }
@@ -198,5 +235,8 @@
         private Button offsetPolygonButton;
         private NumericUpDown numericUpDown;
         private Button resetActionButton;
+        private GroupBox groupBox2;
+        private Button verticalButton;
+        private Button horizontalButton;
     }
 }

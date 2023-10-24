@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.AxHost;
@@ -13,6 +14,13 @@ namespace PolygonEditor.Structures
     {
         private const int offsetErr = 5;
         private const double eps = 0.0001;
+        private static (int width, int height) relImgSize = (20, 20);
+        private static string resourcesPath;
+        private static string relImgIconPath = "aha.jpg";
+        static Utils()
+        {
+            resourcesPath = Directory.GetCurrentDirectory() + "\\..\\..\\..\\resources\\";
+        }
         public static bool IsInCircle(Point p, Point center, int radius)
         {
             return (p.X - center.X) * (p.X - center.X) + (p.Y - center.Y) * (p.Y - center.Y) <= radius * radius;
@@ -45,7 +53,7 @@ namespace PolygonEditor.Structures
 
             if (val == 0) return 0;
 
-            return (val > 0) ? 1 : 2; // clock or counterclock wise 
+            return (val > 0) ? 1 : 2; // clockwise or counterclockwise 
         }
         public static bool DoEdgesIntersect(Segment s1, Segment s2)
         {
@@ -58,30 +66,6 @@ namespace PolygonEditor.Structures
                 return true;
             return false;
         }
-        //public static bool DoEdgesIntersect(Point a1, Point a2, Point b1, Point b2)
-        //{
-        //    //int d1 = Product(b2.Substract(b1), a1.Substract(b1));
-        //    //int d2 = Product(b2.Substract(b1), a2.Substract(b1));
-        //    //int d3 = Product(a2.Substract(a1), b1.Substract(a1));
-        //    //int d4 = Product(a2.Substract(a1), b2.Substract(a1));
-
-        //    //int d12 = d1 * d2;
-        //    //int d34 = d3 * d4;
-
-        //    //if (d12 > 0 || d34 > 0)
-        //    //    return false;
-        //    //if (d12 < 0 && d34 < 0)
-        //    //    return true;
-        //    //if (a1 == b1 || a1 == b2 || a2 == b1 || a2 == b2)
-        //    //    return true;
-        //    //if (Math.Max(a1.X, a2.X) < Math.Min(b1.X, b2.X) ||
-        //    //    Math.Max(b1.X, b2.X) < Math.Min(a1.X, a2.X) ||
-        //    //    Math.Max(a1.Y, a2.Y) < Math.Min(b1.Y, b2.Y) ||
-        //    //    Math.Max(b1.Y, b2.Y) < Math.Min(a1.Y, a2.Y))
-        //    //    return false;
-        //    //return true;
-        //    return doIntersect(a1, a2, b1, b2);
-        //}
         public static bool DoEdgesIntersect(Point p1, Point q1, Point p2, Point q2)
         {
             int o1 = GetOrientation(p1, q1, p2);
@@ -148,10 +132,6 @@ namespace PolygonEditor.Structures
         }
         public static void DrawArcByPoints(Graphics g, Pen pen, Point s, Point ai, Point bi)
         {
-            //int vertexRadius = 6;
-            //g.FillEllipse(Brushes.Blue, (ai.X - vertexRadius / 2), (ai.Y - vertexRadius / 2), vertexRadius, vertexRadius);
-            //g.FillEllipse(Brushes.Green, (bi.X - vertexRadius / 2), (bi.Y - vertexRadius / 2), vertexRadius, vertexRadius);
-            //g.FillEllipse(Brushes.Yellow, (s.X - vertexRadius / 2), (s.Y - vertexRadius / 2), vertexRadius, vertexRadius);
             float r = (float)Math.Sqrt((ai.X - s.X) * (ai.X - s.X) + (ai.Y - s.Y) * (ai.Y - s.Y));
             float x = s.X - r;
             float y = s.Y - r;
@@ -199,6 +179,15 @@ namespace PolygonEditor.Structures
                 next = (next + 1) % points.Count;
             }
             return points;
+        }
+        public static void DrawLine(Graphics g, Pen pen, Point a, Point b, bool withIcon)
+        {
+            g.DrawLine(pen, a, b);
+            if (withIcon)
+            {
+                var img = new Bitmap(resourcesPath + relImgIconPath);
+                g.DrawImage(img, a.X + (b.X - a.X - relImgSize.width) / 2 , a.Y + (b.Y - a.Y - relImgSize.height) / 2, relImgSize.width, relImgSize.height);
+            }
         }
     }
 }

@@ -15,6 +15,8 @@ namespace PolygonEditor
         MovingEdge,
         MovingShape,
         RemovingVertex,
-        OffsettingPolygon
+        OffsettingPolygon,
+        SettingHorizontal,
+        SettingVertical
     }
 }

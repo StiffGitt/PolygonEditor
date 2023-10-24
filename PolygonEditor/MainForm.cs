@@ -53,6 +53,16 @@ namespace PolygonEditor
                     curAction = ActionType.Default;
                     Cursor = System.Windows.Forms.Cursors.Default;
                     break;
+                case ActionType.SettingHorizontal:
+                    canvas.AddRelation(p, Relation.Horizontal);
+                    curAction = ActionType.Default;
+                    Cursor = System.Windows.Forms.Cursors.Default;
+                    break;
+                case ActionType.SettingVertical:
+                    canvas.AddRelation(p, Relation.Vertical);
+                    curAction = ActionType.Default;
+                    Cursor = System.Windows.Forms.Cursors.Default;
+                    break;
                 default:
                     break;
             }
@@ -100,7 +110,7 @@ namespace PolygonEditor
         }
         private void offsetPolygonButton_Click(object sender, EventArgs e)
         {
-            if (curAction == ActionType.Default)
+            if (curAction != ActionType.Painting)
             {
                 curAction = ActionType.OffsettingPolygon;
                 Cursor = System.Windows.Forms.Cursors.Cross;
@@ -122,6 +132,24 @@ namespace PolygonEditor
         private void resetActionButton_Click(object sender, EventArgs e)
         {
             curAction = ActionType.Default;
+        }
+
+        private void horizontalButton_Click(object sender, EventArgs e)
+        {
+            if (curAction != ActionType.Painting)
+            {
+                curAction = ActionType.SettingHorizontal;
+                Cursor = System.Windows.Forms.Cursors.Cross;
+            }
+        }
+
+        private void verticalButton_Click(object sender, EventArgs e)
+        {
+            if (curAction != ActionType.Painting)
+            {
+                curAction = ActionType.SettingVertical;
+                Cursor = System.Windows.Forms.Cursors.Cross;
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,11 +12,15 @@ namespace PolygonEditor.Structures
     public class Polygon : Shape
     {
         public List<Point> points { get; private set; }
+        private Dictionary<Point, Relation> relDict;
         private Color edgeColor;
         private Color vertexColor;
         private Color brushColor;
         private Color hullColor;
         private bool isFinished = false;
+        private string resourcesPath;
+        private Bitmap relIconImg;
+
 
         public Polygon(Color edgeColor, Color vertexColor, Color brushColor, Color hullColor) 
         {
@@ -24,6 +29,8 @@ namespace PolygonEditor.Structures
             this.brushColor = brushColor;
             this.hullColor = hullColor;
             this.points = new List<Point>();
+            this.relDict = new Dictionary<Point, Relation>();
+            
         }
         public override void Draw(Bitmap picture, Point? p = null)
         {
@@ -34,7 +41,7 @@ namespace PolygonEditor.Structures
             if (isFinished && points.Count > 1)
             {
                 g.FillPolygon(fillBrush, points.ToArray());
-                g.DrawPolygon(edgePen, points.ToArray());
+                DrawPolygon(g, points);
             }
             else 
             {
@@ -113,10 +120,6 @@ namespace PolygonEditor.Structures
 
         public override bool IsInside(Point p)
         {
-            //int minY = points.First().Y;
-            //foreach (Point point in points)
-            //    if (point.Y < minY)
-            //        minY = point.Y;
             Point lineEnd = new Point(0, p.Y);
             int intersects = 0;
             for (int i = 0; i < points.Count; i++)
@@ -125,6 +128,29 @@ namespace PolygonEditor.Structures
                     intersects++;
             }
             return intersects % 2 == 1;
+        }
+        public void AddRelation(int idx, Relation r)
+        {
+            Point p = points[idx];
+            int nextIdx = (idx + 1) % points.Count, prevIdx = (idx == 0) ? points.Count - 1 : idx - 1;
+            if ((relDict.ContainsKey(points[prevIdx]) && relDict[points[prevIdx]] == r) || (relDict.ContainsKey(points[nextIdx]) && relDict[points[nextIdx]] == r))
+                return;
+            if (relDict.ContainsKey(p))
+                relDict.Remove(p);
+            relDict.Add(p, r);
+            if (r == Relation.Horizontal)
+                points[nextIdx] = new Point(points[nextIdx].X, p.Y);
+            if (r == Relation.Vertical)
+                points[nextIdx] = new Point(p.X, points[nextIdx].Y);
+        }
+        private void DrawPolygon(Graphics g, List<Point> pointsToDraw)
+        {
+            Pen edgePen = new Pen(edgeColor);
+            var edges = Utils.GetSegmentsFromPoints(pointsToDraw);
+            foreach (var edge in edges)
+            {
+                Utils.DrawLine(g, edgePen, edge.a, edge.b, true);
+            }
         }
         private void DrawInflated(Graphics g)
         {
@@ -140,8 +166,6 @@ namespace PolygonEditor.Structures
                 var s = segments[i];
                 var parS = s.GetParallelsBy(inflationOffset);
                 var p = Utils.LinesIntersectionPoint(Utils.ExtendSegmentToLine(prevS), Utils.ExtendSegmentToLine(parS.Item1));
-                //SolidBrush vertexBrush = new SolidBrush(vertexColor);
-                //g.FillEllipse(vertexBrush, (p.X - vertexRadius / 2), (p.Y - vertexRadius / 2), vertexRadius, vertexRadius);
                 int crossProduct = Utils.Product(prevS.a.Substract(s.a), s.b.Substract(s.a));
                 bool isConvex = crossProduct >= 0;
                 if (!Utils.IsPointOnRay(prevS.b, prevS.a, p) && crossProduct >= 0 || Utils.IsPointOnRay(prevS.b, prevS.a, p) && crossProduct < 0)
@@ -185,8 +209,8 @@ namespace PolygonEditor.Structures
                     var p = Utils.LinesIntersectionPoint(Utils.ExtendSegmentToLine(prevS), Utils.ExtendSegmentToLine(s));
                     g.DrawLine(hullPen, hullSegments[j].Item1.a, p);
                 }
-
             }
         }
+
     }
 }

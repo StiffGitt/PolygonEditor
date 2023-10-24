@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
 using PolygonEditor.Structures;
@@ -119,6 +120,13 @@ namespace PolygonEditor
             }
             Draw();
         }
+        public void AddRelation(Point p, Relation r)
+        {
+            var e = GetEdge(p);
+            if (e.Item2 >= 0 && e.Item1 is Polygon)
+                ((Polygon)e.Item1).AddRelation(e.Item2, r);
+            Draw();
+        }
         public void OffSetPolygon(Point p, int offset)
         {
             Shape s;
@@ -157,14 +165,6 @@ namespace PolygonEditor
             shapeCtors = new Dictionary<ShapeType, Func<Color, Color, Color, Color, Shape>>();
             var l = (Color c1, Color c2, Color c3, Color c4) => new Polygon(c1, c2, c3, c4);
             shapeCtors.Add(ShapeType.Polygon, (Color c1, Color c2, Color c3, Color c4) => new Polygon(c1, c2, c3, c4));
-        }
-        public void TestDrawEllipse(int x, int y)
-        {
-            SolidBrush sb = new SolidBrush(Color.Blue);
-            using (Graphics g = Graphics.FromImage(picture))
-            {
-                g.FillEllipse(sb, x, y, 50, 50);
-            }
         }
     }
 }

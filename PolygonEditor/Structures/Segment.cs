@@ -31,7 +31,7 @@ namespace PolygonEditor.Structures
             double bx2 = 0;
             double by1 = 0;
             double by2 = 0;
-            if (dax == dbx)
+            if (day == dby)
             {
                 ax1 = ax2 = dax;
                 ay1 = day - offset;
@@ -40,7 +40,7 @@ namespace PolygonEditor.Structures
                 by1 = dby - offset;
                 by2 = dby + offset;
             }
-            else if (day == dby)
+            else if (dax == dbx)
             {
                 ax1 = dax - offset;
                 ax2 = dax + offset;
