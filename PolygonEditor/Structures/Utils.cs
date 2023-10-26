@@ -17,9 +17,11 @@ namespace PolygonEditor.Structures
         private static (int width, int height) relImgSize = (20, 20);
         private static string resourcesPath;
         private static string relImgIconPath = "aha.jpg";
+        private static Bitmap iconImg;
         static Utils()
         {
             resourcesPath = Directory.GetCurrentDirectory() + "\\..\\..\\..\\resources\\";
+            iconImg = new Bitmap(resourcesPath + relImgIconPath);
         }
         public static bool IsInCircle(Point p, Point center, int radius)
         {
@@ -185,8 +187,7 @@ namespace PolygonEditor.Structures
             g.DrawLine(pen, a, b);
             if (withIcon)
             {
-                var img = new Bitmap(resourcesPath + relImgIconPath);
-                g.DrawImage(img, a.X + (b.X - a.X - relImgSize.width) / 2 , a.Y + (b.Y - a.Y - relImgSize.height) / 2, relImgSize.width, relImgSize.height);
+                g.DrawImage(iconImg, a.X + (b.X - a.X - relImgSize.width) / 2 , a.Y + (b.Y - a.Y - relImgSize.height) / 2, relImgSize.width, relImgSize.height);
             }
         }
     }

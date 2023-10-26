@@ -82,6 +82,9 @@ namespace PolygonEditor
         }
         public void StartPainting(Point p, ShapeType shape)
         {
+            var e = GetEdge(p);
+            if (e.Item2 >= 0 && e.Item1 is Polygon)
+                ((Polygon)e.Item1).AddPointAfter(e.Item2);
             shapes.Add(shapeCtors[shape](edgeColor, vertexColor, fillColor, hullColor));
             shapes.Last().AddPoint(p);
             Draw();
@@ -125,6 +128,13 @@ namespace PolygonEditor
             var e = GetEdge(p);
             if (e.Item2 >= 0 && e.Item1 is Polygon)
                 ((Polygon)e.Item1).AddRelation(e.Item2, r);
+            Draw();
+        }
+        public void RemoveRelation(Point p)
+        {
+            var e = GetEdge(p);
+            if (e.Item2 >= 0 && e.Item1 is Polygon)
+                ((Polygon)e.Item1).RemoveRelation(e.Item2);
             Draw();
         }
         public void OffSetPolygon(Point p, int offset)

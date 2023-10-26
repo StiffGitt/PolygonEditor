@@ -17,6 +17,7 @@ namespace PolygonEditor
         RemovingVertex,
         OffsettingPolygon,
         SettingHorizontal,
-        SettingVertical
+        SettingVertical,
+        RemovingRelation
     }
 }

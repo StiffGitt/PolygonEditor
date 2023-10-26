@@ -6,13 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace PolygonEditor.Structures
 {
     public class Polygon : Shape
     {
         public List<Point> points { get; private set; }
-        private Dictionary<Point, Relation> relDict;
+        private Dictionary<int, Relation> relDict;
         private Color edgeColor;
         private Color vertexColor;
         private Color brushColor;
@@ -29,7 +30,7 @@ namespace PolygonEditor.Structures
             this.brushColor = brushColor;
             this.hullColor = hullColor;
             this.points = new List<Point>();
-            this.relDict = new Dictionary<Point, Relation>();
+            this.relDict = new Dictionary<int, Relation>();
             
         }
         public override void Draw(Bitmap picture, Point? p = null)
@@ -41,7 +42,7 @@ namespace PolygonEditor.Structures
             if (isFinished && points.Count > 1)
             {
                 g.FillPolygon(fillBrush, points.ToArray());
-                DrawPolygon(g, points);
+                DrawPolygon(g, points, relDict);
             }
             else 
             {
@@ -72,7 +73,25 @@ namespace PolygonEditor.Structures
         }
         public override void MovePoint(int idx, Point p)
         {
+            int prevIdx = (idx == 0)? points.Count - 1 : idx - 1, nextIdx = (idx + 1) % points.Count;
+            if (relDict.ContainsKey(prevIdx))
+                MoveWithRelation(idx, prevIdx, p, relDict[prevIdx]);
+            if (relDict.ContainsKey(idx))
+                MoveWithRelation(idx, nextIdx, p, relDict[idx]);
             points[idx] = p;
+        }
+        private void MoveWithRelation(int i, int j, Point p,Relation rel)
+        {
+            if (rel == Relation.Horizontal)
+            {
+                points[j] = new Point(points[j].X, p.Y);
+                points[i] = new Point(p.X, p.Y);
+            }
+            if (rel == Relation.Vertical)
+            {
+                points[j] = new Point(p.X, points[j].Y);
+                points[i] = new Point(p.X, p.Y);
+            }
         }
         public override void MoveEdge(int idx, Point p, Point prevP)
         {
@@ -133,23 +152,27 @@ namespace PolygonEditor.Structures
         {
             Point p = points[idx];
             int nextIdx = (idx + 1) % points.Count, prevIdx = (idx == 0) ? points.Count - 1 : idx - 1;
-            if ((relDict.ContainsKey(points[prevIdx]) && relDict[points[prevIdx]] == r) || (relDict.ContainsKey(points[nextIdx]) && relDict[points[nextIdx]] == r))
+            if ((relDict.ContainsKey(prevIdx) && relDict[prevIdx] == r) || (relDict.ContainsKey(nextIdx) && relDict[nextIdx] == r))
                 return;
-            if (relDict.ContainsKey(p))
-                relDict.Remove(p);
-            relDict.Add(p, r);
+            if (relDict.ContainsKey(idx))
+                relDict.Remove(idx);
+            relDict.Add(idx, r);
             if (r == Relation.Horizontal)
                 points[nextIdx] = new Point(points[nextIdx].X, p.Y);
             if (r == Relation.Vertical)
                 points[nextIdx] = new Point(p.X, points[nextIdx].Y);
         }
-        private void DrawPolygon(Graphics g, List<Point> pointsToDraw)
+        public void RemoveRelation(int idx)
+        {
+            if(relDict.ContainsKey(idx))
+                relDict.Remove(idx);
+        }
+        private void DrawPolygon(Graphics g, List<Point> pointsToDraw, Dictionary<int, Relation>? dict)
         {
             Pen edgePen = new Pen(edgeColor);
-            var edges = Utils.GetSegmentsFromPoints(pointsToDraw);
-            foreach (var edge in edges)
+            for (int i = 0, j = 1; i < pointsToDraw.Count; i++, j = (j + 1) % pointsToDraw.Count)
             {
-                Utils.DrawLine(g, edgePen, edge.a, edge.b, true);
+                Utils.DrawLine(g, edgePen, pointsToDraw[i], pointsToDraw[j], dict != null && dict.ContainsKey(i));
             }
         }
         private void DrawInflated(Graphics g)

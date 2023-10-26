@@ -63,6 +63,11 @@ namespace PolygonEditor
                     curAction = ActionType.Default;
                     Cursor = System.Windows.Forms.Cursors.Default;
                     break;
+                case ActionType.RemovingRelation:
+                    canvas.RemoveRelation(p);
+                    curAction = ActionType.Default;
+                    Cursor = System.Windows.Forms.Cursors.Default;
+                    break;
                 default:
                     break;
             }
@@ -148,6 +153,15 @@ namespace PolygonEditor
             if (curAction != ActionType.Painting)
             {
                 curAction = ActionType.SettingVertical;
+                Cursor = System.Windows.Forms.Cursors.Cross;
+            }
+        }
+
+        private void removeRelationButton_Click(object sender, EventArgs e)
+        {
+            if (curAction != ActionType.Painting)
+            {
+                curAction = ActionType.RemovingRelation;
                 Cursor = System.Windows.Forms.Cursors.Cross;
             }
         }

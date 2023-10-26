@@ -41,6 +41,7 @@
             deleteButton = new RadioButton();
             moveButton = new RadioButton();
             addButtom = new RadioButton();
+            removeRelationButton = new Button();
             tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
             groupBox1.SuspendLayout();
@@ -108,11 +109,12 @@
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(removeRelationButton);
             groupBox2.Controls.Add(verticalButton);
             groupBox2.Controls.Add(horizontalButton);
             groupBox2.Location = new Point(312, 0);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(127, 94);
+            groupBox2.Size = new Size(207, 94);
             groupBox2.TabIndex = 7;
             groupBox2.TabStop = false;
             groupBox2.Text = "Relations";
@@ -203,6 +205,16 @@
             addButtom.Text = "Add";
             addButtom.UseVisualStyleBackColor = true;
             // 
+            // removeRelationButton
+            // 
+            removeRelationButton.Location = new Point(124, 59);
+            removeRelationButton.Name = "removeRelationButton";
+            removeRelationButton.Size = new Size(77, 29);
+            removeRelationButton.TabIndex = 2;
+            removeRelationButton.Text = "remove";
+            removeRelationButton.UseVisualStyleBackColor = true;
+            removeRelationButton.Click += removeRelationButton_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -238,5 +250,6 @@
         private GroupBox groupBox2;
         private Button verticalButton;
         private Button horizontalButton;
+        private Button removeRelationButton;
     }
 }
