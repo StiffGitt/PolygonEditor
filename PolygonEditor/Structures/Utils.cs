@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -16,12 +17,15 @@ namespace PolygonEditor.Structures
         private const double eps = 0.0001;
         private static (int width, int height) relImgSize = (20, 20);
         private static string resourcesPath;
-        private static string relImgIconPath = "aha.jpg";
-        private static Bitmap iconImg;
+        private static string relImgIconPathHorizontal = "aha.jpg";
+        private static string relImgIconPathVertical = "aha2.jpg";
+        private static Bitmap iconImgHorizontal;
+        private static Bitmap iconImgVertical;
         static Utils()
         {
             resourcesPath = Directory.GetCurrentDirectory() + "\\..\\..\\..\\resources\\";
-            iconImg = new Bitmap(resourcesPath + relImgIconPath);
+            iconImgHorizontal = new Bitmap(resourcesPath + relImgIconPathHorizontal);
+            iconImgVertical = new Bitmap(resourcesPath + relImgIconPathVertical);
         }
         public static bool IsInCircle(Point p, Point center, int radius)
         {
@@ -182,13 +186,106 @@ namespace PolygonEditor.Structures
             }
             return points;
         }
-        public static void DrawLine(Graphics g, Pen pen, Point a, Point b, bool withIcon)
+        private static void DrawLineDown(Graphics g, Pen pen, Point a, Point b)
         {
-            g.DrawLine(pen, a, b);
-            if (withIcon)
+            int dx = b.X - a.X, dy = b.Y - a.Y, yi = 1;
+            if (dy < 0)
             {
-                g.DrawImage(iconImg, a.X + (b.X - a.X - relImgSize.width) / 2 , a.Y + (b.Y - a.Y - relImgSize.height) / 2, relImgSize.width, relImgSize.height);
+                yi = -1;
+                dy = -dy;
             }
+            int d0 = (2 * dy) - dx;
+            for (int x = a.X, y = a.Y; x <= b.X; x++)
+            {
+                g.DrawEllipse(pen, x, y, 1, 1);
+                if (d0 > 0)
+                {
+                    y += yi;
+                    d0 += 2 * (dy - dx);
+                }
+                else
+                    d0 += 2 * dy;
+            }
+
+        }
+        private static void DrawLineUp(Graphics g, Pen pen, Point a, Point b)
+        {
+            int dx = b.X - a.X, dy = b.Y - a.Y, xi = 1;
+            if (dx < 0)
+            {
+                xi = -1;
+                dx = -dx;
+            }
+            int d0 = (2 * dx) - dy;
+            for (int x = a.X, y = a.Y; y <= b.Y; y++)
+            {
+                g.DrawEllipse(pen, x, y, 1, 1);
+                if (d0 > 0)
+                {
+                    x += xi;
+                    d0 += 2 * (dx - dy);
+                }
+                else
+                    d0 += 2 * dx;
+            }
+        }
+        private static void DrawLineWithBresenham(Graphics g, Pen pen, Point a, Point b)
+        {
+            if (Math.Abs(b.Y - a.Y) < Math.Abs(b.X - a.X))
+            {
+                if (a.X > b.X)
+                    DrawLineDown(g, pen, b, a);
+                else
+                    DrawLineDown(g, pen, a, b);
+            }
+            else
+            {
+                if (a.Y > b.Y)
+                    DrawLineUp(g, pen, b, a);
+                else
+                    DrawLineUp(g, pen, a, b);
+            }
+        }
+        public static void DrawLine(Graphics g, Pen pen, Point a, Point b, Relation? rel, LineAlgorithm lineAlgorithm)
+        {
+            if (lineAlgorithm == LineAlgorithm.Library)
+                g.DrawLine(pen, a, b);
+            if (lineAlgorithm == LineAlgorithm.Brensenham)
+                DrawLineWithBresenham(g, pen, a, b);
+            if (rel != null)
+            {
+                g.DrawImage(rel == Relation.Horizontal? iconImgHorizontal : iconImgVertical, 
+                    a.X + (b.X - a.X - relImgSize.width) / 2 , a.Y + (b.Y - a.Y - relImgSize.height) / 2, relImgSize.width, relImgSize.height);
+            }
+        }
+        public static void DrawLines(Graphics g, Pen pen, List<Point> pointsToDraw, LineAlgorithm lineAlgorithm)
+        {
+            if (pointsToDraw.Count < 2) return;
+            for (int i = 1; i < pointsToDraw.Count; i++)
+            {
+                DrawLine(g, pen, pointsToDraw[i - 1], pointsToDraw[i], null, lineAlgorithm);
+            }
+        }
+        public static void AddPredefinedShapes(List<Shape> shapes, Bitmap bitmap, Color edgeColor, Color vertexColor, Color brushColor, Color hullColor) 
+        {
+            int distX = bitmap.Size.Width / 6;
+            int distY = bitmap.Size.Height / 6;
+            Polygon pol1 = new Polygon(edgeColor, vertexColor, brushColor, hullColor);
+            pol1.AddPoint(new Point(distX, distY));
+            pol1.AddPoint(new Point(2 * distX, 5 * distY));
+            pol1.AddPoint(new Point(3 * distX, 5 *distY));
+            pol1.AddPoint(new Point(distX, distY));
+            shapes.Add(pol1);
+
+            Polygon pol2 = new Polygon(edgeColor, vertexColor, brushColor, hullColor);
+            pol2.AddPoint(new Point(3 * distX, distY));
+            pol2.AddPoint(new Point(5 * distX, distY));
+            pol2.AddPoint(new Point(4 * distX, 5 * distY));
+            pol2.AddPoint(new Point(4 * distX, 3 * distY));
+            pol2.AddPoint(new Point(3 * distX, distY));
+            pol2.AddRelation(0, Relation.Horizontal);
+            pol2.AddRelation(2, Relation.Vertical);
+            shapes.Add(pol2);
         }
     }
 }

@@ -29,8 +29,7 @@ namespace PolygonEditor
             switch (curAction)
             {
                 case ActionType.AddNewShape:
-                    canvas.StartPainting(p, ShapeType.Polygon);
-                    curAction = ActionType.Painting;
+                    curAction = canvas.StartPainting(p, ShapeType.Polygon) ? ActionType.Painting : ActionType.Default;
                     break;
                 case ActionType.Painting:
                     curAction = canvas.AddPoint(p) ? ActionType.Default : ActionType.Painting;
@@ -124,7 +123,8 @@ namespace PolygonEditor
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
-            canvas.Draw();
+            if (canvas != null)
+                canvas.Draw();
             pictureBox.Refresh();
         }
 
@@ -137,6 +137,7 @@ namespace PolygonEditor
         private void resetActionButton_Click(object sender, EventArgs e)
         {
             curAction = ActionType.Default;
+            Cursor = System.Windows.Forms.Cursors.Default;
         }
 
         private void horizontalButton_Click(object sender, EventArgs e)
@@ -164,6 +165,20 @@ namespace PolygonEditor
                 curAction = ActionType.RemovingRelation;
                 Cursor = System.Windows.Forms.Cursors.Cross;
             }
+        }
+
+        private void libraryRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            canvas.lineAlgorithm = LineAlgorithm.Library;
+            canvas.Draw();
+            pictureBox.Refresh();
+        }
+
+        private void bresenhamRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            canvas.lineAlgorithm = LineAlgorithm.Brensenham;
+            canvas.Draw();
+            pictureBox.Refresh();
         }
     }
 }

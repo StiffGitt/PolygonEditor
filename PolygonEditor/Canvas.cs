@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing.Text;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.Xml;
@@ -25,6 +26,7 @@ namespace PolygonEditor
         private (Shape, int, Point) curMovedEdge = (null, -1, new Point());
         private (Shape, Point) curMovedShape = (null, new Point());
         private Shape lastOffsettedShape = null;
+        public LineAlgorithm lineAlgorithm = LineAlgorithm.Library;
 
         public Canvas(Bitmap bitmap, PictureBox pictureBox)
         {
@@ -33,6 +35,8 @@ namespace PolygonEditor
             this.backGroundColor = pictureBox.BackColor;
             this.pictureBox = pictureBox;
             InitializeDicts();
+            Utils.AddPredefinedShapes(shapes, picture, edgeColor, vertexColor, fillColor, hullColor);
+            Draw();
         }
         public ActionType GetActionOnMove(Point p)
         {
@@ -80,14 +84,20 @@ namespace PolygonEditor
             }
             return (null, new Point());
         }
-        public void StartPainting(Point p, ShapeType shape)
+        public bool StartPainting(Point p, ShapeType shape)
         {
             var e = GetEdge(p);
+            bool isNew = false;
             if (e.Item2 >= 0 && e.Item1 is Polygon)
-                ((Polygon)e.Item1).AddPointAfter(e.Item2);
-            shapes.Add(shapeCtors[shape](edgeColor, vertexColor, fillColor, hullColor));
-            shapes.Last().AddPoint(p);
+                ((Polygon)e.Item1).AddPointAfter(p, e.Item2);
+            else
+            {
+                shapes.Add(shapeCtors[shape](edgeColor, vertexColor, fillColor, hullColor));
+                shapes.Last().AddPoint(p);
+                isNew = true;
+            }
             Draw();
+            return isNew;
         }
         public bool AddPoint(Point p)
         {
@@ -160,7 +170,7 @@ namespace PolygonEditor
             pictureBox.Image = picture;
             foreach (Shape shape in shapes)
             {
-                shape.Draw(picture, p);
+                shape.Draw(picture, lineAlgorithm, p);
             }
         }
         private void Clear()

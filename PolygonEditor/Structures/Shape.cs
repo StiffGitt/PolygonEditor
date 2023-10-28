@@ -11,7 +11,7 @@ namespace PolygonEditor.Structures
         protected const int vertexRadius = 10;
         protected bool isInflated = false;
         protected int inflationOffset = 0;
-        public abstract void Draw(Bitmap picture, Point? p = null);
+        public abstract void Draw(Bitmap picture, LineAlgorithm lineAlgorithm, Point? p = null);
         public abstract bool AddPoint(Point p); // returns true if drawing is finished
         public abstract void MovePoint(int idx, Point p);
         public abstract void MoveEdge(int idx, Point p, Point prevP);

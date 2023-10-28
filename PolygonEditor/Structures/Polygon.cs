@@ -21,6 +21,7 @@ namespace PolygonEditor.Structures
         private bool isFinished = false;
         private string resourcesPath;
         private Bitmap relIconImg;
+        private LineAlgorithm lineAlgorithm;
 
 
         public Polygon(Color edgeColor, Color vertexColor, Color brushColor, Color hullColor) 
@@ -33,8 +34,9 @@ namespace PolygonEditor.Structures
             this.relDict = new Dictionary<int, Relation>();
             
         }
-        public override void Draw(Bitmap picture, Point? p = null)
+        public override void Draw(Bitmap picture, LineAlgorithm curLineAlgorithm, Point? p = null)
         {
+            this.lineAlgorithm = curLineAlgorithm;
             Graphics g = Graphics.FromImage(picture);
             Pen edgePen = new Pen(edgeColor);
             SolidBrush vertexBrush = new SolidBrush(vertexColor);
@@ -47,9 +49,10 @@ namespace PolygonEditor.Structures
             else 
             {
                 if (points.Count > 1)
-                    g.DrawLines(edgePen, points.ToArray());
+                    Utils.DrawLines(g, edgePen, points, lineAlgorithm);
                 if (p != null)
-                    g.DrawLine(edgePen, points.Last(), (Point)p);
+                    Utils.DrawLine(g, edgePen, points.Last(), (Point)p, null, lineAlgorithm);
+                //g.DrawLine(edgePen, points.Last(), (Point)p);
             }
             foreach (Point v in points)
             {
@@ -70,6 +73,19 @@ namespace PolygonEditor.Structures
                 points.Add(p);
             }
             return isFinished;
+        }
+        public void AddPointAfter(Point p, int idx)
+        {
+            points.Insert(idx + 1, p);
+            Dictionary<int, Relation> newDict = new Dictionary<int, Relation>();
+            foreach (var it in relDict)
+            {
+                if (it.Key < idx)
+                    newDict.Add(it.Key, it.Value);
+                if (it.Key > idx)
+                    newDict.Add(it.Key + 1, it.Value);
+            }
+            relDict = newDict;
         }
         public override void MovePoint(int idx, Point p)
         {
@@ -172,7 +188,8 @@ namespace PolygonEditor.Structures
             Pen edgePen = new Pen(edgeColor);
             for (int i = 0, j = 1; i < pointsToDraw.Count; i++, j = (j + 1) % pointsToDraw.Count)
             {
-                Utils.DrawLine(g, edgePen, pointsToDraw[i], pointsToDraw[j], dict != null && dict.ContainsKey(i));
+                Utils.DrawLine(g, edgePen, pointsToDraw[i], pointsToDraw[j],
+                    (dict != null && dict.ContainsKey(i))? dict[i] : null, lineAlgorithm);
             }
         }
         private void DrawInflated(Graphics g)
@@ -209,7 +226,8 @@ namespace PolygonEditor.Structures
                 if (hullSegments[i].Item2)
                 {
                     if (hullSegments[k].Item2)
-                        g.DrawLine(hullPen, s.a, s.b);
+                        Utils.DrawLine(g, hullPen, s.a, s.b, null, lineAlgorithm);
+                        //g.DrawLine(hullPen, s.a, s.b);
                     Utils.DrawArcByPoints(g, hullPen, segments[j].b, s.a, prevS.b);
                 }
                 else if (hullSegments[k].Item2)
@@ -218,19 +236,22 @@ namespace PolygonEditor.Structures
                     g.DrawLine(hullPen, hullSegments[i].Item1.b, p);
                     if (hullSegments[j].Item2)
                     {
-                        g.DrawLine(hullPen, hullSegments[j].Item1.a, p);
+                        Utils.DrawLine(g, hullPen, hullSegments[j].Item1.a, p, null, lineAlgorithm);
+                        //g.DrawLine(hullPen, hullSegments[j].Item1.a, p);
                     }
                     else
                     {
                         var prevPrevS = hullSegments[(j == 0) ? hullSegments.Count - 1 : j - 1].Item1;
                         var pprev = Utils.LinesIntersectionPoint(Utils.ExtendSegmentToLine(prevPrevS), Utils.ExtendSegmentToLine(prevS));
-                        g.DrawLine(hullPen, pprev, p);
+                        //g.DrawLine(hullPen, pprev, p);
+                        Utils.DrawLine(g, hullPen, pprev, p, null, lineAlgorithm);
                     }
                 }
                 else
                 {
                     var p = Utils.LinesIntersectionPoint(Utils.ExtendSegmentToLine(prevS), Utils.ExtendSegmentToLine(s));
-                    g.DrawLine(hullPen, hullSegments[j].Item1.a, p);
+                    //g.DrawLine(hullPen, hullSegments[j].Item1.a, p);
+                    Utils.DrawLine(g, hullPen, hullSegments[j].Item1.a, p, null, lineAlgorithm);
                 }
             }
         }
