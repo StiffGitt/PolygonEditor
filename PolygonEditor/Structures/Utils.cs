@@ -287,5 +287,10 @@ namespace PolygonEditor.Structures
             pol2.AddRelation(2, Relation.Vertical);
             shapes.Add(pol2);
         }
+        public static void PaintPixel(Bitmap bitmap, int x, int y, Color color)
+        {
+            if (x > 0 && x < bitmap.Width && y > 0 && y < bitmap.Height)
+                bitmap.SetPixel(x, y, color);
+        }
     }
 }

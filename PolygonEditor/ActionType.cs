@@ -18,6 +18,7 @@ namespace PolygonEditor
         OffsettingPolygon,
         SettingHorizontal,
         SettingVertical,
-        RemovingRelation
+        RemovingRelation,
+        AddingCircle
     }
 }

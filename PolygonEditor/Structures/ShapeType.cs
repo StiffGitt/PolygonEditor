@@ -9,5 +9,6 @@ namespace PolygonEditor.Structures
     public enum ShapeType
     {
         Polygon,
+        Circle
     }
 }

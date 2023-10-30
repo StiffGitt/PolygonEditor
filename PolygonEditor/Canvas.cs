@@ -27,6 +27,7 @@ namespace PolygonEditor
         private (Shape, Point) curMovedShape = (null, new Point());
         private Shape lastOffsettedShape = null;
         public LineAlgorithm lineAlgorithm = LineAlgorithm.Library;
+        private Circle lastAddedCircle;
 
         public Canvas(Bitmap bitmap, PictureBox pictureBox, bool withPredifined = true)
         {
@@ -180,6 +181,20 @@ namespace PolygonEditor
             {
                 g.Clear(backGroundColor);
             }
+        }
+        public void AddCircle(Point p, double r)
+        {
+            var circle = GetShape(p).Item1;
+            if (circle is Circle)
+                ((Circle)circle).SetRadius(r);
+            else
+                shapes.Add(new Circle(edgeColor, p, r));
+            Draw();
+        }
+        public void ChangeCircleRadius(double r)
+        {
+            if(lastAddedCircle != null)
+                lastAddedCircle.SetRadius(r);
         }
         private void InitializeDicts()
         {

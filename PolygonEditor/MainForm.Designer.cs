@@ -32,6 +32,8 @@
             pictureBox = new PictureBox();
             label1 = new Label();
             groupBox1 = new GroupBox();
+            radiusTextBox = new TextBox();
+            circleButton = new Button();
             clearButton = new Button();
             groupBox3 = new GroupBox();
             bresenhamRadioButton = new RadioButton();
@@ -98,6 +100,8 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(radiusTextBox);
+            groupBox1.Controls.Add(circleButton);
             groupBox1.Controls.Add(clearButton);
             groupBox1.Controls.Add(groupBox3);
             groupBox1.Controls.Add(groupBox2);
@@ -113,6 +117,23 @@
             groupBox1.Size = new Size(776, 94);
             groupBox1.TabIndex = 2;
             groupBox1.TabStop = false;
+            // 
+            // radiusTextBox
+            // 
+            radiusTextBox.Location = new Point(165, 14);
+            radiusTextBox.Name = "radiusTextBox";
+            radiusTextBox.Size = new Size(68, 27);
+            radiusTextBox.TabIndex = 11;
+            // 
+            // circleButton
+            // 
+            circleButton.Location = new Point(239, 12);
+            circleButton.Name = "circleButton";
+            circleButton.Size = new Size(67, 29);
+            circleButton.TabIndex = 10;
+            circleButton.Text = "Circle";
+            circleButton.UseVisualStyleBackColor = true;
+            circleButton.Click += circleButton_Click;
             // 
             // clearButton
             // 
@@ -218,7 +239,7 @@
             // 
             // numericUpDown
             // 
-            numericUpDown.Location = new Point(137, 53);
+            numericUpDown.Location = new Point(168, 56);
             numericUpDown.Margin = new Padding(3, 4, 3, 4);
             numericUpDown.Maximum = new decimal(new int[] { 500, 0, 0, 0 });
             numericUpDown.Name = "numericUpDown";
@@ -230,7 +251,7 @@
             // 
             // offsetPolygonButton
             // 
-            offsetPolygonButton.Location = new Point(209, 48);
+            offsetPolygonButton.Location = new Point(240, 48);
             offsetPolygonButton.Margin = new Padding(3, 4, 3, 4);
             offsetPolygonButton.Name = "offsetPolygonButton";
             offsetPolygonButton.Size = new Size(66, 37);
@@ -314,5 +335,7 @@
         private RadioButton bresenhamRadioButton;
         private RadioButton libraryRadioButton;
         private Button clearButton;
+        private Button circleButton;
+        private TextBox radiusTextBox;
     }
 }

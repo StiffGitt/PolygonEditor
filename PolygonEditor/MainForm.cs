@@ -67,6 +67,11 @@ namespace PolygonEditor
                     curAction = ActionType.Default;
                     Cursor = System.Windows.Forms.Cursors.Default;
                     break;
+                case ActionType.AddingCircle:
+                    canvas.AddCircle(p, (Double.TryParse(radiusTextBox.Text, out double d) ? d : 50));
+                    curAction = ActionType.Default;
+                    Cursor = System.Windows.Forms.Cursors.Default;
+                    break;
                 default:
                     break;
             }
@@ -186,6 +191,22 @@ namespace PolygonEditor
             Bitmap bitmap = new Bitmap(pictureBox.Size.Width, pictureBox.Size.Height);
             pictureBox.Image = bitmap;
             this.canvas = new Canvas(bitmap, pictureBox, false);
+        }
+
+        private void circleButton_Click(object sender, EventArgs e)
+        {
+            if (curAction != ActionType.Painting)
+            {
+                curAction = ActionType.AddingCircle;
+                Cursor = System.Windows.Forms.Cursors.Cross;
+            }
+        }
+
+        private void radiusTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (Double.TryParse(radiusTextBox.Text, out double d))
+                canvas.ChangeCircleRadius(d);
+            canvas.Draw();
         }
     }
 }
