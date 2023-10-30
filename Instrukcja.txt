@@ -1,0 +1,14 @@
+Instrukcja:
+Przyciski: Offset, Horizontal, Vertical, inicjują wybieranie jednej figury/krawędzi.
+Counter przy przycisku Offset ustawia offset dla ostatniego dodanego wielokąta wypukłego.
+
+Założenia:
+Dodanie relacji powoduje przeniesienie jednego z wierzchołków krawędzi, aby spełniała on ograniczenie.
+Wielokąt wypukły będzie dobrze zdefiniowany jedynie dla wielokątów bez samoprzecięć.
+
+Algorytmy:
+Algorytm dla wielokąta odsuniętego obejmuję:
+Znalezienie krawędzi równoległych odległych o offset.
+Wybranie odpowiedniej krawędzi na podstawie punkty przecięcia przedłużenia krawędzi poprzedzającej daną krawędź oraz tego czy wierzchołek w którym zaczyna się krawędź jest wklęsły czy wypukły.
+Odpowiednie połączenie krawędzi (łukiem gdy wklęsły, punkt przecięcia gdy wypukły)
+
