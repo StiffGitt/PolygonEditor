@@ -28,14 +28,15 @@ namespace PolygonEditor
         private Shape lastOffsettedShape = null;
         public LineAlgorithm lineAlgorithm = LineAlgorithm.Library;
 
-        public Canvas(Bitmap bitmap, PictureBox pictureBox)
+        public Canvas(Bitmap bitmap, PictureBox pictureBox, bool withPredifined = true)
         {
             shapes = new List<Shape>();
             this.picture = bitmap;
             this.backGroundColor = pictureBox.BackColor;
             this.pictureBox = pictureBox;
             InitializeDicts();
-            Utils.AddPredefinedShapes(shapes, picture, edgeColor, vertexColor, fillColor, hullColor);
+            if(withPredifined)
+                Utils.AddPredefinedShapes(shapes, picture, edgeColor, vertexColor, fillColor, hullColor);
             Draw();
         }
         public ActionType GetActionOnMove(Point p)

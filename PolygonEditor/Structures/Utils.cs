@@ -15,7 +15,7 @@ namespace PolygonEditor.Structures
     {
         private const int offsetErr = 5;
         private const double eps = 0.0001;
-        private static (int width, int height) relImgSize = (20, 20);
+        private static (int width, int height) relImgSize = (15, 15);
         private static string resourcesPath;
         private static string relImgIconPathHorizontal = "aha.jpg";
         private static string relImgIconPathVertical = "aha2.jpg";

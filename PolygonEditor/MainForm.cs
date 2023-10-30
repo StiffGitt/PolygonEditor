@@ -4,7 +4,7 @@ namespace PolygonEditor
     public partial class MainForm : Form
     {
         private Canvas canvas;
-        private ActionType curAction = ActionType.AddNewShape;
+        private ActionType curAction = ActionType.Default;
 
         public MainForm()
         {
@@ -179,6 +179,13 @@ namespace PolygonEditor
             canvas.lineAlgorithm = LineAlgorithm.Brensenham;
             canvas.Draw();
             pictureBox.Refresh();
+        }
+
+        private void clearButton_Click(object sender, EventArgs e)
+        {
+            Bitmap bitmap = new Bitmap(pictureBox.Size.Width, pictureBox.Size.Height);
+            pictureBox.Image = bitmap;
+            this.canvas = new Canvas(bitmap, pictureBox, false);
         }
     }
 }

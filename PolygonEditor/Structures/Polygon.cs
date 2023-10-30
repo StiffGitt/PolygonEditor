@@ -130,6 +130,15 @@ namespace PolygonEditor.Structures
         }
         public override bool RemoveVertex(int idx)
         {
+            Dictionary<int, Relation> newDict = new Dictionary<int, Relation>();
+            foreach (var it in relDict)
+            {
+                if (it.Key < idx - 1)
+                    newDict.Add(it.Key, it.Value);
+                if (it.Key > idx)
+                    newDict.Add(it.Key - 1, it.Value);
+            }
+            relDict = newDict;
             points.RemoveAt(idx);
             return points.Count == 0;
         }
